@@ -1,22 +1,25 @@
-// // 1 identificare in html a claselor folosite
-// // 2 inserare librarie pentru calendar si executarea functiei
-// // 3 foloseste alert in caz ca a ales o data in trecut pt a alege o data valida // libraria notiflix - butonul start este inactiv pana se alege o data valida
-// // 4 cand se apasa start (eventlistener) se executa functia de countdown
+// 1. inserare librarii
+// 2. aducem clasele folosite din html
+// 3. dezactivare buton start
+// 4. folosire librarie flatpikr
+// 5. optiuni: daca se alege data din trecut atunci folosire librarie Notify si butonul start este dezactivat//daca se alege data din viitor se initializeaza functia 
+// countdown, butonul se start este activ, se adauga eventlistener si in timpul countdown alegerea datei este dezactivata.
+// 6. ?? cand diferenta ajunge la 0 se afiseaza mesaj Countdown over
+// 7. formatarea orei
  
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const datetimePicker = document.querySelector('#datetime-picker');
-const startBtn = document.querySelector("button[data-start");
-const days = document.querySelector('span[data-days]');
-const hours = document.querySelector('span[data-hours]');
-const minutes = document.querySelector('span[data-minutes]');
-const seconds = document.querySelector('span[data-seconds]');
+const startBtn = document.querySelector('button[data-start');
+const day = document.querySelector('span[data-days]');
+const hour = document.querySelector('span[data-hours]');
+const minute = document.querySelector('span[data-minutes]');
+const second = document.querySelector('span[data-seconds]');
 
 startBtn.disabled = true;
-
-flatpickr("#datetime-picker", options);
 
 const options = {
   enableTime: true,
@@ -25,71 +28,64 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     const selectedDate = selectedDates[0];
-    const startTime = Date.now();
+    const startDate = Date.now();
 
-    if (selectedDate < startTime) {
-      Notify.failure('Hello Please choose a date in the future');
+    if (selectedDate < startDate) {
+      Notify.failure('Please choose a date in the future');
       startBtn.disabled = true;
       return;
-    };
-    
+    }
+
     startBtn.disabled = false;
-    let intervalId = null;
 
     startBtn.addEventListener('click', startCountdown);
 
     function startCountdown() {
       startBtn.disabled = true;
       datetimePicker.disabled = true;
-
       intervalId = setInterval(() => {
-        const currentTime = Date.now();
+        const currentDate = Date.now();
 
-        if (selectedDate < currentTime) {
+        if (selectedDate < currentDate) {
+          Notify.success('Final Countdown');
           clearInterval(intervalId);
           datetimePicker.disabled = false;
           return;
-        };
+        }
 
-        const timeDifference = selectedDate - currentTime;
+        const timeDifference = selectedDate - currentDate;
         const { days, hours, minutes, seconds } = convertMs(timeDifference);
-        
-        refs.days.textContent = addLeadingZero(days);
-        refs.hours.textContent = addLeadingZero(hours);
-        refs.minutes.textContent = addLeadingZero(minutes);
-        refs.seconds.textContent = addLeadingZero(seconds);
+
+        day.textContent = addLeadingZero(days);
+        hour.textContent = addLeadingZero(hours);
+        minute.textContent = addLeadingZero(minutes);
+        second.textContent = addLeadingZero(seconds);
       }, 1000);
-    };
+    }
   },
 };
 
+flatpickr('#datetime-picker', options);
 
 function convertMs(ms) {
-    // Number of milliseconds per unit of time
-    const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-  
-    // Remaining days
-    const days = Math.floor(ms / day);
-    // Remaining hours
-    const hours = Math.floor((ms % day) / hour);
-    // Remaining minutes
-    const minutes = Math.floor(((ms % day) % hour) / minute);
-    // Remaining seconds
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-  
-    return { days, hours, minutes, seconds };
-  }
-  
- 
-  function addLeadingZero(value) {
-    return String(value).padStart(2, '0');
-  };
-  
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
 
- 
+  // Remaining days
+  const days = Math.floor(ms / day);
+  // Remaining hours
+  const hours = Math.floor((ms % day) / hour);
+  // Remaining minutes
+  const minutes = Math.floor(((ms % day) % hour) / minute);
+  // Remaining seconds
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
+  return { days, hours, minutes, seconds };
+}
 
- 
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+}
