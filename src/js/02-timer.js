@@ -2,11 +2,10 @@
 // 2. aducem clasele folosite din html
 // 3. dezactivare buton start
 // 4. folosire librarie flatpikr
-// 5. optiuni: daca se alege data din trecut atunci folosire librarie Notify si butonul start este dezactivat//daca se alege data din viitor se initializeaza functia 
+// 5. optiuni: daca se alege data din trecut atunci folosire librarie Notify si butonul start este dezactivat//daca se alege data din viitor se initializeaza functia
 // countdown, butonul se start este activ, se adauga eventlistener si in timpul countdown alegerea datei este dezactivata.
 // 6. ?? cand diferenta ajunge la 0 se afiseaza mesaj Countdown over
 // 7. formatarea orei
- 
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -43,13 +42,13 @@ const options = {
     function startCountdown() {
       startBtn.disabled = true;
       datetimePicker.disabled = true;
-      intervalId = setInterval(() => {
+      const intervalId = setInterval(() => {
         const currentDate = Date.now();
 
         if (selectedDate < currentDate) {
-          Notify.success('Final Countdown');
           clearInterval(intervalId);
           datetimePicker.disabled = false;
+          Notify.success('Final Countdown');
           return;
         }
 
