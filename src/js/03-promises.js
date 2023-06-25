@@ -1,26 +1,40 @@
-function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
-  }
+'use strict';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
+const formElement = document.querySelector('.form');
+const delayElement = document.querySelector('input[name="delay"]');
+const stepElement = document.querySelector('input[name="step"]');
+const amountElement = document.querySelector('input[name="amount"]');
+const submitBtn = document.querySelector('button[type="submit"]');
+
+submitBtn.addEventListener('click', generatePromise);
+
+function createPromise(position, delayElement) {
+  return new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delayElement });
+      }
+      reject({ position, delayElement });
+    }, delayElement);
+  });
 }
 
-// ! TEMA 3
-// Select la ce ne trebuie
-// submit event la o functie care sa se ocupe de generarea de
-// .then de la functia createPromise (trebuie adaugata logica/ poate niste notificari ? cu Notify)
-// poate un for loop in functie de nr luat din interfata de amount?
+function generatePromise(event) {
+  event.preventDefault();
 
-// function createPromise(position, delay) {
-//   return new Promise((resolve, reject) => {
-//     const shouldResolve = Math.random() > 0.3;
-//     setTimeout(() => {
-//       if (shouldResolve) {
-//         resolve({ position, delay });
-//       }
-//       reject({ position, delay });
-//     }, delay);
-//   });
-// }
+  let delayValue = parseInt(delayElement.value);
+  let amountValue = parseInt(amountElement.value);
+
+  for (let i = 1; i <= amountValue; i++) {
+    createPromise(i, delayValue)
+      .then(({ position, delayElement }) => {
+        Notify.success(`✅ Fulfilled promise ${position} in ${delayElement}ms`);
+      })
+      .catch(({ position, delayElement }) => {
+        Notify.failure(`❌ Rejected promise ${position} in ${delayElement}ms`);
+      });
+    delayValue += parseInt(stepElement.value);
+  }
+}
